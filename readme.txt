@@ -1,10 +1,10 @@
 === countdown-timer-WordPress-plugin ===
 必要なWordPressバージョン: 5.3以上
-安定版タグ: 1.0.0
+安定版タグ: 1.1.0
 ライセンス: GPLv2 またはそれ以降
 ライセンスURI: https://www.gnu.org/licenses/gpl-2.0.html　
 
-進捗メーター付きのカウントダウンタイマーをショートコードで追加します。Adds a shortcode countdown timer with a progress meter. 
+進捗メーター付きのカウントダウンタイマーをショートコードで追加します。
 
 == 使用方法 ==
 
@@ -14,7 +14,7 @@
 
 すべての属性を使用する場合:
 
-[countdown_timer start="2026-08-01 00:00" target="2026-08-31 18:00" label="remaining" red_under="3" end_text="終了"]
+[countdown_timer start="2026-08-01 00:00" target="2026-08-31 18:00" label="remaining" red_under="3" end_text="終了" meter="show" align="left"]
 
 属性:
 
@@ -23,6 +23,8 @@
 * label: オプション。"remaining" は「残り○○日」と表示し、"until" は「あと○○日」と表示します。デフォルトは"remaining"です。
 * red_under: オプション。値を設定すると、残り日数がその値以下になった際に日数の数字が赤色になります。
 * end_text: オプション。終了日時を過ぎた後に表示されるテキスト。デフォルトでは"終了"と表示されます。
+* meter: オプション。 "show" はメーターを表示し、 "hide" は非表示にします。デフォルトは "show" です。
+* align: オプション。 "left"、 "center"、または "right" でカウントダウンテキストの配置を指定します。デフォルトは "left" です。
 
 == 注意事項 ==
 
