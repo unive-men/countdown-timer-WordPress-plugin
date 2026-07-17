@@ -25,6 +25,21 @@
   font-weight: 700;
 }
 
+.wpcm-countdown--align-left .wpcm-countdown__text {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.wpcm-countdown--align-center .wpcm-countdown__text {
+  justify-content: center;
+  text-align: center;
+}
+
+.wpcm-countdown--align-right .wpcm-countdown__text {
+  justify-content: flex-end;
+  text-align: right;
+}
+
 .wpcm-countdown__prefix,
 .wpcm-countdown__suffix,
 .wpcm-countdown__ended {
@@ -55,6 +70,10 @@
   border-radius: inherit;
   background: var(--wpcm-meter-fill);
   transition: width 240ms ease;
+}
+
+.wpcm-countdown.is-red .wpcm-countdown__bar {
+  background: var(--wpcm-alert);
 }
 
 .wpcm-error {
