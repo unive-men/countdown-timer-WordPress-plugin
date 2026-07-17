@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: WP Countdown Meter
- * Description: Adds a shortcode countdown timer with a progress meter. Supports multiple timers on the same page.
- * Version: 1.0.0
+ * Plugin Name: countdown-timer-WordPress-plugin
+ * Description: Adds a shortcode countdown timer with a progress meter. 
+ * Version: 1.1.0
  * Author: Codex
  * License: GPL-2.0-or-later
  * Text Domain: wp-countdown-meter
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPCM_VERSION', '1.0.0' );
+define( 'WPCM_VERSION', '1.1.0' );
 define( 'WPCM_PLUGIN_FILE', __FILE__ );
 define( 'WPCM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -101,7 +101,7 @@ function wpcm_calculate_state( DateTimeImmutable $start, DateTimeImmutable $targ
  * Renders the countdown shortcode.
  *
  * Usage:
- * [countdown_timer start="2026-08-01 00:00" target="2026-08-31 18:00" label="remaining" red_under="3"]
+ * [countdown_timer start="2026-08-01 00:00" target="2026-08-31 18:00" label="remaining" red_under="3" meter="show" align="left"]
  *
  * @param array<string,string> $atts Shortcode attributes.
  * @return string
@@ -114,6 +114,8 @@ function wpcm_render_countdown_timer( $atts ) {
 			'label'     => 'remaining',
 			'red_under' => '',
 			'end_text'  => '終了',
+			'meter'     => 'show',
+			'align'     => 'left',
 		),
 		(array) $atts,
 		'countdown_timer'
@@ -135,18 +137,27 @@ function wpcm_render_countdown_timer( $atts ) {
 	$red_under = is_numeric( $atts['red_under'] ) ? max( 0, (int) $atts['red_under'] ) : -1;
 	$end_text  = sanitize_text_field( $atts['end_text'] );
 	$end_text  = '' === $end_text ? '終了' : $end_text;
+	$meter     = in_array( $atts['meter'], array( 'show', 'hide' ), true ) ? $atts['meter'] : 'show';
+	$align     = in_array( $atts['align'], array( 'left', 'center', 'right' ), true ) ? $atts['align'] : 'left';
 	$state     = wpcm_calculate_state( $start, $target, current_datetime() );
 	$is_red    = ! $state['ended'] && $red_under >= 0 && $state['days'] <= $red_under;
+	$classes   = array(
+		'wpcm-countdown',
+		'wpcm-countdown--align-' . $align,
+		'hide' === $meter ? 'wpcm-countdown--meter-hidden' : '',
+		$is_red ? 'is-red' : '',
+	);
 
 	ob_start();
 	?>
 	<div
-		class="wpcm-countdown"
+		class="<?php echo esc_attr( implode( ' ', array_filter( $classes ) ) ); ?>"
 		data-start="<?php echo esc_attr( $start->format( DateTimeInterface::ATOM ) ); ?>"
 		data-target="<?php echo esc_attr( $target->format( DateTimeInterface::ATOM ) ); ?>"
 		data-label="<?php echo esc_attr( $label ); ?>"
 		data-red-under="<?php echo esc_attr( (string) $red_under ); ?>"
 		data-end-text="<?php echo esc_attr( $end_text ); ?>"
+		data-meter="<?php echo esc_attr( $meter ); ?>"
 	>
 		<div class="wpcm-countdown__text" aria-live="polite">
 			<?php if ( $state['ended'] ) : ?>
@@ -155,9 +166,11 @@ function wpcm_render_countdown_timer( $atts ) {
 				<span class="wpcm-countdown__prefix"><?php echo esc_html( $prefix ); ?></span><span class="wpcm-countdown__days<?php echo $is_red ? ' is-red' : ''; ?>"><?php echo esc_html( (string) $state['days'] ); ?></span><span class="wpcm-countdown__suffix">日</span>
 			<?php endif; ?>
 		</div>
-		<div class="wpcm-countdown__meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) $state['progress'] ); ?>">
-			<span class="wpcm-countdown__bar" style="width: <?php echo esc_attr( (string) $state['progress'] ); ?>%;"></span>
-		</div>
+		<?php if ( 'show' === $meter ) : ?>
+			<div class="wpcm-countdown__meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( (string) $state['progress'] ); ?>">
+				<span class="wpcm-countdown__bar" style="width: <?php echo esc_attr( (string) $state['progress'] ); ?>%;"></span>
+			</div>
+		<?php endif; ?>
 	</div>
 	<?php
 	return ob_get_clean();
