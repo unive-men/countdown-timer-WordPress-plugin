@@ -47,16 +47,18 @@
     var meter = timer.querySelector('.wpcm-countdown__meter');
     var bar = timer.querySelector('.wpcm-countdown__bar');
 
-    if (!state || !text || !meter || !bar) {
+    if (!state || !text) {
       return;
     }
 
     if (state.ended) {
+      timer.classList.remove('is-red');
       text.innerHTML = '<span class="wpcm-countdown__ended"></span>';
       text.querySelector('.wpcm-countdown__ended').textContent = timer.dataset.endText || '終了';
     } else {
       var redUnder = Number.parseInt(timer.dataset.redUnder || '-1', 10);
       var shouldRed = Number.isFinite(redUnder) && redUnder >= 0 && state.days <= redUnder;
+      timer.classList.toggle('is-red', shouldRed);
 
       text.innerHTML =
         '<span class="wpcm-countdown__prefix"></span>' +
@@ -70,8 +72,10 @@
       days.classList.toggle('is-red', shouldRed);
     }
 
-    meter.setAttribute('aria-valuenow', String(state.progress));
-    bar.style.width = state.progress + '%';
+    if (meter && bar) {
+      meter.setAttribute('aria-valuenow', String(state.progress));
+      bar.style.width = state.progress + '%';
+    }
   }
 
   function renderAll() {
